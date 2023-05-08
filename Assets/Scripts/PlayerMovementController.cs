@@ -4,13 +4,15 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterGrounding))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMovementController : MonoBehaviour
+public class PlayerMovementController : MonoBehaviour, IMoveable
 {
     [SerializeField] float movementSpeed = 5f;
     [SerializeField] float jumpForce = 400f;
 
     private new Rigidbody2D rigidbody2D;
     private CharacterGrounding characterGrounding;
+
+    public float Speed { get; private set; }
 
     private void Awake()
     {
@@ -21,6 +23,8 @@ public class PlayerMovementController : MonoBehaviour
     private void FixedUpdate()
     {
         float horizontalMovement = Input.GetAxis("Horizontal");     
+
+        Speed = horizontalMovement;
 
         Vector3 playerMovement = new Vector3(horizontalMovement, 0);
         
