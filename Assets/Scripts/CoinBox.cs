@@ -8,21 +8,24 @@ public class CoinBox : MonoBehaviour
     [SerializeField] private SpriteRenderer disabledSprite;
 
     [SerializeField] private int totalCoins = 2;
-
+        
+    private Animator animator;
     private int remainingCoins;
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         remainingCoins = totalCoins;
         enabledSprite.enabled = true;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (remainingCoins > 0 && collision.collider.GetComponent<PlayerMovementController>() != null)
+        if (remainingCoins > 0 && WasHitByPlayer(collision) && WasHitFroBottom(collision))
         {
             GameManager.Instance.AddCoin();
             remainingCoins--;
+            animator.SetTrigger("FlipCoin");
 
             if (remainingCoins <= 0)
             {
@@ -30,5 +33,15 @@ public class CoinBox : MonoBehaviour
                 disabledSprite.enabled = true;
             }
         }
+    }
+
+    private bool WasHitByPlayer(Collision2D collision)
+    {
+        return collision.collider.GetComponent<PlayerMovementController>() != null;
+    }
+
+    private bool WasHitFroBottom(Collision2D collision)
+    {
+        return collision.contacts[0].normal.y > 0.5;
     }
 }
