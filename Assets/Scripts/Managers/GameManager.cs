@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -38,7 +36,21 @@ public class GameManager : MonoBehaviour
         if (Lives <= 0)
         {
             RestartGame();
-        }        
+        }  
+        else
+        {
+            SendPlayerToCheckpoint();
+        }
+    }
+
+    private void SendPlayerToCheckpoint()
+    {
+        var checkpointManager = FindObjectOfType<CheckpointManager>();
+        var checkpoint = checkpointManager.GetLastReachedCheckpoint();
+
+        var player = FindObjectOfType<PlayerMovementController>();
+
+        player.transform.position = checkpoint.transform.position;
     }
 
     private void RestartGame()

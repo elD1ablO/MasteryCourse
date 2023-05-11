@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterGrounding))]
@@ -7,7 +6,7 @@ using UnityEngine;
 public class PlayerMovementController : MonoBehaviour, IMoveable
 {
     [SerializeField] float movementSpeed = 5f;
-    [SerializeField] float jumpForce = 400f;
+    [SerializeField] float jumpForce = 100f;
 
     private new Rigidbody2D rigidbody2D;
     private CharacterGrounding characterGrounding;
@@ -19,7 +18,13 @@ public class PlayerMovementController : MonoBehaviour, IMoveable
         rigidbody2D = GetComponent<Rigidbody2D>();
         characterGrounding = GetComponent<CharacterGrounding>();
     }
-
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && characterGrounding.IsGrounded)
+        {
+            rigidbody2D.AddForce(Vector2.up * jumpForce);
+        }
+    }
     private void FixedUpdate()
     {
         float horizontalMovement = Input.GetAxis("Horizontal");     
@@ -29,10 +34,6 @@ public class PlayerMovementController : MonoBehaviour, IMoveable
         Vector3 playerMovement = new Vector3(horizontalMovement, 0);
         
         transform.position += playerMovement * Time.deltaTime * movementSpeed;
-
-        if (Input.GetKey(KeyCode.Space) && characterGrounding.IsGrounded)
-        {            
-            rigidbody2D.AddForce(Vector2.up * jumpForce);
-        }
+                
     }
 }
