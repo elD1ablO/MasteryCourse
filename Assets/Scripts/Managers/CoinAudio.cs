@@ -11,6 +11,15 @@ public class CoinAudio : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnCoinsAmountChanged += (coins) => audioSource.Play();
+        GameManager.Instance.OnCoinsAmountChanged += GameManager_OnCoinsAmountChanged;
+    }
+
+    private void GameManager_OnCoinsAmountChanged(int coins)
+    {
+        audioSource.Play();
+    }
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnCoinsAmountChanged -= GameManager_OnCoinsAmountChanged;
     }
 }
