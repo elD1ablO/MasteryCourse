@@ -28,7 +28,7 @@ public class CharacterGrounding : MonoBehaviour
     {
         if (groundedObject != null)
         {
-            if (groundedObjectLastPosition.HasValue && groundedObjectLastPosition.Value != groundedObject.position)
+            if (groundedObjectLastPosition.HasValue && groundedObjectLastPosition.Value != groundedObject.position && groundedObject.GetComponent<Mover>() != null)
             {
                 Vector3 delta = groundedObject.position - groundedObjectLastPosition.Value;
 
