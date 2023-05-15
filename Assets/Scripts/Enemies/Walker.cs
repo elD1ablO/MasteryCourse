@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Walker : MonoBehaviour
+public class Walker : MonoBehaviour, ITakeShellHits
 {
     [SerializeField] private float speed = 1;
+    [SerializeField] private GameObject spawnOnStompPrefab;
 
     private new Collider2D collider;
     private new Rigidbody2D rigidbody2D;
@@ -33,6 +34,33 @@ public class Walker : MonoBehaviour
         {
             SwitchDirection();
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.WasHitByPlayer())            
+        {
+            if (collision.HitFromTop())
+            {
+                HandleWalkerStomped(collision.collider.GetComponent<PlayerMovementController>());
+            }
+            else
+            {
+                GameManager.Instance.KillPlayer();
+            }
+        }
+    }
+
+    private void HandleWalkerStomped(PlayerMovementController playerMovementController)
+    {
+        if (spawnOnStompPrefab != null)
+        {
+            Instantiate(spawnOnStompPrefab, transform.position, transform.rotation);
+        }
+        
+        playerMovementController.Bounce();
+
+        Destroy(gameObject);
     }
 
     private bool HitNonPlayer()
@@ -80,5 +108,10 @@ public class Walker : MonoBehaviour
     {
         moveDirection *= -1;
         spriteRenderer.flipX = !spriteRenderer.flipX;
+    }
+
+    public void HandleShellHit(ShellFlipped shellFlipped)
+    {
+        Destroy(gameObject);
     }
 }

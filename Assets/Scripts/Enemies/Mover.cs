@@ -14,7 +14,8 @@ public class Mover : MonoBehaviour
     private float positionPercent;
     
     private int direction = 1;
-    private float distance;
+    private float distance;    
+
     private void Awake()
     {
         distance = Vector3.Distance(startTransform.position, endTransform.position);

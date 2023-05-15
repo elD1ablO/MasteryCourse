@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class CharacterGrounding : MonoBehaviour
 {
+    public Vector2 GroundedDirection {  get; private set; }
 
-    [SerializeField] private Transform leftFoot;
-    [SerializeField] private Transform rightFoot;
+    [SerializeField] private Transform[] positions;
+    
     [SerializeField] private float maxDistance;
     [SerializeField] private LayerMask layerMask;
 
@@ -16,11 +17,14 @@ public class CharacterGrounding : MonoBehaviour
 
     private void Update()
     {
-        CheckGrounding(leftFoot);
-
-        if (IsGrounded == false)
-            CheckGrounding(rightFoot);
-
+        foreach (var position in positions)
+        {
+            CheckGrounding(position);
+            if (IsGrounded)
+            {
+                break;
+            }
+        }
         StickToMovingObjects();
     }
 
@@ -28,7 +32,7 @@ public class CharacterGrounding : MonoBehaviour
     {
         if (groundedObject != null)
         {
-            if (groundedObjectLastPosition.HasValue && groundedObjectLastPosition.Value != groundedObject.position && groundedObject.GetComponent<Mover>() != null)
+            if (groundedObjectLastPosition.HasValue && groundedObjectLastPosition.Value != groundedObject.position)
             {
                 Vector3 delta = groundedObject.position - groundedObjectLastPosition.Value;
 
@@ -42,15 +46,21 @@ public class CharacterGrounding : MonoBehaviour
         }
     }
 
-    private void CheckGrounding(Transform foot)
+    private void CheckGrounding(Transform footTransform)
     {
-        var raycastHit = Physics2D.Raycast(foot.position, Vector2.down, maxDistance, layerMask);
-        Debug.DrawRay(foot.position, Vector3.down * maxDistance, Color.red);
+        var raycastHit = Physics2D.Raycast(footTransform.position, footTransform.forward, maxDistance, layerMask);
+        Debug.DrawRay(footTransform.position, footTransform.forward * maxDistance, Color.red);
 
         if (raycastHit.collider != null)
         {
-            groundedObject = raycastHit.collider.transform;
-            IsGrounded = true;
+            if(groundedObject != raycastHit.collider.transform)
+            {
+                groundedObject = raycastHit.collider.transform;
+                IsGrounded = true;
+                groundedObjectLastPosition= groundedObject.position;
+
+                GroundedDirection = footTransform.forward;
+            }
         }
         else
         {
